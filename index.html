@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>OS Lab Programs</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body {
+    margin: 0;
+    font-family: "Segoe UI", sans-serif;
+    display: flex;
+    height: 100vh;
+    background: #0d1117;
+    color: #e6edf3;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 260px;
+    background: #161b22;
+    padding: 10px;
+    overflow-y: auto;
+    border-right: 1px solid #30363d;
+}
+
+.sidebar h2 {
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+.file {
+    padding: 6px 10px;
+    cursor: pointer;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+.file:hover {
+    background: #21262d;
+}
+
+/* Main */
+.main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Topbar */
+.topbar {
+    background: #161b22;
+    padding: 10px;
+    border-bottom: 1px solid #30363d;
+    display: flex;
+    justify-content: space-between;
+}
+
+button {
+    background: #238636;
+    border: none;
+    padding: 6px 12px;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #2ea043;
+}
+
+/* Editor */
+textarea {
+    flex: 1;
+    background: #0d1117;
+    color: #e6edf3;
+    border: none;
+    padding: 15px;
+    font-family: monospace;
+    font-size: 14px;
+}
+
+/* Output */
+.output {
+    height: 140px;
+    background: black;
+    color: #00ff00;
+    padding: 10px;
+    font-family: monospace;
+    border-top: 1px solid #30363d;
+}
+</style>
+</head>
+
+<body>
+
+<div class="sidebar">
+<h2>📁 Programs (37)</h2>
+
+<!-- FILE LIST -->
+<div class="file" onclick="openFile('adder.c')">adder.c</div>
+<div class="file" onclick="openFile('bankers.c')">bankers.c</div>
+<div class="file" onclick="openFile('cscan.c')">cscan.c</div>
+<div class="file" onclick="openFile('deadlock.c')">deadlock.c</div>
+<div class="file" onclick="openFile('diningph.c')">diningph.c</div>
+<div class="file" onclick="openFile('fork1.c')">fork1.c</div>
+<div class="file" onclick="openFile('fork_exec.c')">fork_exec.c</div>
+<div class="file" onclick="openFile('fullscheduling.c')">fullscheduling.c</div>
+<div class="file" onclick="openFile('look.c')">look.c</div>
+<div class="file" onclick="openFile('multithread.c')">multithread.c</div>
+<div class="file" onclick="openFile('osfork.c')">osfork.c</div>
+<div class="file" onclick="openFile('pagereplacement.c')">pagereplacement.c</div>
+<div class="file" onclick="openFile('paging.c')">paging.c</div>
+<div class="file" onclick="openFile('process1.c')">process1.c</div>
+<div class="file" onclick="openFile('process2.c')">process2.c</div>
+<div class="file" onclick="openFile('quadratic.c')">quadratic.c</div>
+<div class="file" onclick="openFile('receiver.c')">receiver.c</div>
+<div class="file" onclick="openFile('semaphore1.c')">semaphore1.c</div>
+<div class="file" onclick="openFile('semaphore2.c')">semaphore2.c</div>
+<div class="file" onclick="openFile('sender.c')">sender.c</div>
+<div class="file" onclick="openFile('sjf.c')">sjf.c</div>
+<div class="file" onclick="openFile('stats.c')">stats.c</div>
+
+<!-- OTHER FILES -->
+<div class="file">a.out</div>
+<div class="file">adder</div>
+<div class="file">fork1</div>
+<div class="file">fork2</div>
+<div class="file">fork_exec</div>
+<div class="file">myadder</div>
+<div class="file">p1</div>
+<div class="file">p2</div>
+<div class="file">page</div>
+<div class="file">paging</div>
+<div class="file">receiver</div>
+<div class="file">sender</div>
+<div class="file">stats</div>
+
+</div>
+
+<div class="main">
+
+<div class="topbar">
+<span id="filename">Select a file</span>
+<button onclick="runCode()">▶ Run</button>
+</div>
+
+<textarea id="editor">// Click any file to view code</textarea>
+
+<div class="output" id="output">
+Output will appear here...
+</div>
+
+</div>
+
+<script>
+function openFile(name) {
+    document.getElementById("filename").innerText = name;
+    document.getElementById("editor").value =
+        "// " + name + " loaded\n\n(Connect GitHub API to fetch real code)";
+}
+
+function runCode() {
+    document.getElementById("output").innerText =
+        "⚠️ Execution not connected.\nUse backend (Node.js + GCC)";
+}
+</script>
+
+</body>
+</html>
