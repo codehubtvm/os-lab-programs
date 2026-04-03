@@ -4,6 +4,7 @@ const { exec } = require("child_process");
 const cors = require("cors");
 
 const app = express();
+
 app.use(cors());
 app.use(express.json());
 
@@ -12,12 +13,18 @@ app.post("/run", (req, res) => {
 
     fs.writeFileSync("program.c", code);
 
-    exec("gcc program.c -o program && ./program", (err, stdout, stderr) => {
-        if (err) {
+    exec("gcc program.c -o program && ./program", (error, stdout, stderr) => {
+        if (error) {
             return res.json({ output: stderr });
         }
         res.json({ output: stdout });
     });
 });
 
-app.listen(5000, () => console.log("Server running on port 5000"));
+app.get("/", (req, res) => {
+    res.send("Server is working ✅");
+});
+
+app.listen(5000, () => {
+    console.log("🔥 Server running on port 5000");
+});
