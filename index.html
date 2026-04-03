@@ -2,56 +2,52 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>OS Lab Programs</title>
+<title>OS Lab IDE</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
 body {
     margin: 0;
-    font-family: "Segoe UI", sans-serif;
     display: flex;
     height: 100vh;
+    font-family: sans-serif;
     background: #0d1117;
-    color: #e6edf3;
+    color: white;
 }
 
-/* Sidebar */
 .sidebar {
     width: 260px;
     background: #161b22;
-    padding: 10px;
     overflow-y: auto;
-    border-right: 1px solid #30363d;
-}
-
-.sidebar h2 {
-    font-size: 16px;
-    margin-bottom: 10px;
+    padding: 10px;
 }
 
 .file {
-    padding: 6px 10px;
+    padding: 8px;
     cursor: pointer;
-    border-radius: 6px;
-    font-size: 14px;
+    border-radius: 5px;
 }
+.file:hover { background: #21262d; }
 
-.file:hover {
-    background: #21262d;
-}
-
-/* Main */
 .main {
     flex: 1;
     display: flex;
     flex-direction: column;
 }
 
-/* Topbar */
-.topbar {
-    background: #161b22;
+#editor { height: 70%; }
+#terminal {
+    height: 30%;
+    background: black;
+    color: #00ff00;
     padding: 10px;
-    border-bottom: 1px solid #30363d;
+    overflow-y: auto;
+    font-family: monospace;
+}
+
+.topbar {
+    padding: 10px;
+    background: #161b22;
     display: flex;
     justify-content: space-between;
 }
@@ -62,108 +58,78 @@ button {
     padding: 6px 12px;
     color: white;
     border-radius: 5px;
-    cursor: pointer;
-}
-
-button:hover {
-    background: #2ea043;
-}
-
-/* Editor */
-textarea {
-    flex: 1;
-    background: #0d1117;
-    color: #e6edf3;
-    border: none;
-    padding: 15px;
-    font-family: monospace;
-    font-size: 14px;
-}
-
-/* Output */
-.output {
-    height: 140px;
-    background: black;
-    color: #00ff00;
-    padding: 10px;
-    font-family: monospace;
-    border-top: 1px solid #30363d;
 }
 </style>
 </head>
 
 <body>
 
-<div class="sidebar">
-<h2>📁 Programs (37)</h2>
-
-<!-- FILE LIST -->
-<div class="file" onclick="openFile('adder.c')">adder.c</div>
-<div class="file" onclick="openFile('bankers.c')">bankers.c</div>
-<div class="file" onclick="openFile('cscan.c')">cscan.c</div>
-<div class="file" onclick="openFile('deadlock.c')">deadlock.c</div>
-<div class="file" onclick="openFile('diningph.c')">diningph.c</div>
-<div class="file" onclick="openFile('fork1.c')">fork1.c</div>
-<div class="file" onclick="openFile('fork_exec.c')">fork_exec.c</div>
-<div class="file" onclick="openFile('fullscheduling.c')">fullscheduling.c</div>
-<div class="file" onclick="openFile('look.c')">look.c</div>
-<div class="file" onclick="openFile('multithread.c')">multithread.c</div>
-<div class="file" onclick="openFile('osfork.c')">osfork.c</div>
-<div class="file" onclick="openFile('pagereplacement.c')">pagereplacement.c</div>
-<div class="file" onclick="openFile('paging.c')">paging.c</div>
-<div class="file" onclick="openFile('process1.c')">process1.c</div>
-<div class="file" onclick="openFile('process2.c')">process2.c</div>
-<div class="file" onclick="openFile('quadratic.c')">quadratic.c</div>
-<div class="file" onclick="openFile('receiver.c')">receiver.c</div>
-<div class="file" onclick="openFile('semaphore1.c')">semaphore1.c</div>
-<div class="file" onclick="openFile('semaphore2.c')">semaphore2.c</div>
-<div class="file" onclick="openFile('sender.c')">sender.c</div>
-<div class="file" onclick="openFile('sjf.c')">sjf.c</div>
-<div class="file" onclick="openFile('stats.c')">stats.c</div>
-
-<!-- OTHER FILES -->
-<div class="file">a.out</div>
-<div class="file">adder</div>
-<div class="file">fork1</div>
-<div class="file">fork2</div>
-<div class="file">fork_exec</div>
-<div class="file">myadder</div>
-<div class="file">p1</div>
-<div class="file">p2</div>
-<div class="file">page</div>
-<div class="file">paging</div>
-<div class="file">receiver</div>
-<div class="file">sender</div>
-<div class="file">stats</div>
-
-</div>
+<div class="sidebar" id="fileList">Loading...</div>
 
 <div class="main">
+    <div class="topbar">
+        <span id="filename">No file</span>
+        <button onclick="runCode()">▶ Run</button>
+    </div>
 
-<div class="topbar">
-<span id="filename">Select a file</span>
-<button onclick="runCode()">▶ Run</button>
+    <div id="editor"></div>
+    <div id="terminal">Terminal ready...</div>
 </div>
 
-<textarea id="editor">// Click any file to view code</textarea>
-
-<div class="output" id="output">
-Output will appear here...
-</div>
-
-</div>
+<script src="https://unpkg.com/monaco-editor@latest/min/vs/loader.js"></script>
 
 <script>
-function openFile(name) {
-    document.getElementById("filename").innerText = name;
-    document.getElementById("editor").value =
-        "// " + name + " loaded\n\n(Connect GitHub API to fetch real code)";
+let editor;
+let currentFile = "";
+
+// Monaco setup
+require.config({ paths: { vs: "https://unpkg.com/monaco-editor@latest/min/vs" }});
+require(["vs/editor/editor.main"], function () {
+    editor = monaco.editor.create(document.getElementById("editor"), {
+        value: "// Loading...",
+        language: "c",
+        theme: "vs-dark"
+    });
+});
+
+// 🔗 Fetch files from GitHub
+async function loadFiles() {
+    const res = await fetch("https://api.github.com/repos/codehubtvm/os-lab-programs/contents/Programs");
+    const data = await res.json();
+
+    let html = "";
+    data.forEach(file => {
+        html += `<div class="file" onclick="openFile('${file.download_url}','${file.name}')">${file.name}</div>`;
+    });
+
+    document.getElementById("fileList").innerHTML = html;
 }
 
-function runCode() {
-    document.getElementById("output").innerText =
-        "⚠️ Execution not connected.\nUse backend (Node.js + GCC)";
+async function openFile(url, name) {
+    currentFile = name;
+    document.getElementById("filename").innerText = name;
+
+    const res = await fetch(url);
+    const code = await res.text();
+
+    editor.setValue(code);
 }
+
+// ▶ Run code
+async function runCode() {
+    const code = editor.getValue();
+
+    const res = await fetch("http://localhost:5000/run", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code })
+    });
+
+    const data = await res.json();
+    document.getElementById("terminal").innerText = data.output;
+}
+
+loadFiles();
 </script>
 
 </body>
